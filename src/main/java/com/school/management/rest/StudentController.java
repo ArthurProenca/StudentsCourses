@@ -1,8 +1,13 @@
 package com.school.management.rest;
 
-import com.school.management.model.dto.StudentDto;
+import com.school.management.model.Course;
+import com.school.management.model.dto.CourseDTO;
+import com.school.management.model.dto.StudentDTO;
+import com.school.management.service.CourseService;
 import com.school.management.service.StudentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,17 +18,12 @@ import java.util.Optional;
 @Controller
 @RestController
 @RequestMapping("/students")
+@RequiredArgsConstructor
 public class StudentController {
 
     private final StudentService studentService;
 
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
-    }
-
-    /**
-     * GET methods (retrieving info)
-     */
+    private final CourseService courseService;
 
     /**
      * HTTP method: GET
@@ -32,11 +32,11 @@ public class StudentController {
      *
      * @return the list of students.
      */
-    @GetMapping(value = "/")
-    @ResponseStatus(HttpStatus.OK)
-//	public List<StudentDto> getStudents(@RequestParam(name = "without-courses") Optional<Boolean> withoutCourses) {
-    public List<StudentDto> getStudents() {
-        return studentService.getStudents();
+
+   
+    @GetMapping
+    public List<StudentDTO> getStudents(@RequestParam(name = "without-courses") Optional<Boolean> withoutCourses) {
+        return studentService.getStudents(withoutCourses.orElse(false));
     }
 
     /**
@@ -46,14 +46,9 @@ public class StudentController {
      * @return student info related to the id.
      */
     @GetMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public StudentDto getStudent(@PathVariable Long id) {
+    public StudentDTO getStudent(@PathVariable Long id) {
         return studentService.getStudent(id);
     }
-
-    /**
-     * PUT methods (updating info)
-     */
 
     /**
      * HTTP method: PUT
@@ -65,32 +60,24 @@ public class StudentController {
      */
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentDto updateStudent(@PathVariable Long id, @RequestBody StudentDto studentDto) {
+    public StudentDTO updateStudent(@PathVariable Long id, @RequestBody StudentDTO studentDto) {
         studentDto.setId(id);
         return studentService.updateStudent(studentDto);
     }
 
     /**
-     * POST methods (inserting info)
-     */
-
-    /**
      * HTTP method: POST
      *
-     * @param studentDtoList = a list of students, in JSON format, to be registered. Limited to 50 students per request.
+     * @param studentDTOList = a list of students, in JSON format, to be registered. Limited to 50 students per request.
      *                       Ex: [{"name": "John Doe", "address": "Some address"},
      *                       {"name": "Jane Doe", "address": "Another address"}]
      * @return a list of the students that were registered with the submitted request.
      */
-    @PostMapping(value = "/")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public List<StudentDto> createStudents(@RequestBody List<StudentDto> studentDtoList) {
-        return studentService.createStudents(studentDtoList);
+    public List<StudentDTO> createStudents(@RequestBody List<StudentDTO> studentDTOList) {
+        return studentService.createStudents(studentDTOList);
     }
-
-    /**
-     * DELETE methods (removing info)
-     */
 
     /**
      * HTTP method: DELETE
@@ -118,42 +105,32 @@ public class StudentController {
     }
 
     /**
-     *
-     * TODO methods
-     *
-     */
-
-    /**
      * HTTP method: GET
      * <p>
-     * TODO
      *
      * @param id = the student id.
      * @return list of courses the student is enrolled.
      */
     @GetMapping(value = "/{id}/courses")
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void getCoursesFromStudent(@PathVariable Long id) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This endpoint must to be implemented.");
+    public List<?> getCoursesFromStudent(@PathVariable Long id) {
+        return studentService.getCoursesFromStudent(id);
     }
 
     /**
      * HTTP method: GET
      * <p>
-     * TODO
      *
      * @return list of relationships between students and courses, ordered by student and course.
      */
     @GetMapping(value = "/courses")
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void getRelations() {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This endpoint must to be implemented.");
+    public ResponseEntity<?> getRelations() {
+        return ResponseEntity.ok(courseService.getStudentAndCourseRelations());
     }
 
     /**
      * HTTP method: PUT
      * <p>
-     * TODO
      *
      * @param id        = the student id.
      * @param courseIds = the ids of the courses to enroll the student. Limited to 5 courses.
@@ -161,8 +138,7 @@ public class StudentController {
      * @return a list containing the student id and the enrolled courses.
      */
     @PutMapping(value = "/{id}/courses")
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public void updateStudentCourses(@PathVariable Long id, @RequestBody List<Long> courseIds) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This endpoint must to be implemented.");
+        studentService.enrollStudentInCourses(id, courseIds);
     }
 }

@@ -3,7 +3,7 @@ package com.school.management.model.dto;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-public class StudentDto {
+public class StudentDTO {
 
 	private Long id;
 
@@ -16,8 +16,8 @@ public class StudentDto {
 	private Timestamp updatedAt;
 
 
-	public StudentDto(){}
-	public StudentDto(String name, String address) {
+	public StudentDTO(){}
+	public StudentDTO(String name, String address) {
 		Timestamp ts = Timestamp.from(Instant.now());
 		this.id = 0L;
 		this.name = name;
@@ -26,7 +26,7 @@ public class StudentDto {
 		this.updatedAt = ts;
 	}
 
-	public StudentDto(Long id, String name, String address, Timestamp createdAt, Timestamp updatedAt) {
+	public StudentDTO(Long id, String name, String address, Timestamp createdAt, Timestamp updatedAt) {
 		this(name, address);
 		this.id = id;
 		this.createdAt = createdAt;

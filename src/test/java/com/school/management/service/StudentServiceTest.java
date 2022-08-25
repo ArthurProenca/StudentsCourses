@@ -1,6 +1,6 @@
 package com.school.management.service;
 
-import com.school.management.model.dto.StudentDto;
+import com.school.management.model.dto.StudentDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ class StudentServiceTest {
 	List<Long> courseIds;
 
 	@Mock
-	List<StudentDto> studentsDto;
+	List<StudentDTO> studentsDto;
 
 	@InjectMocks
 	StudentService studentService;
