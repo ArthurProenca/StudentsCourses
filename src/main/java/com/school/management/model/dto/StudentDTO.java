@@ -1,8 +1,14 @@
 package com.school.management.model.dto;
 
+import com.school.management.model.Student;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 
+@Getter
+@Setter
 public class StudentDTO {
 
 	private Long id;
@@ -14,9 +20,6 @@ public class StudentDTO {
 	private Timestamp createdAt;
 
 	private Timestamp updatedAt;
-
-
-	public StudentDTO(){}
 	public StudentDTO(String name, String address) {
 		Timestamp ts = Timestamp.from(Instant.now());
 		this.id = 0L;
@@ -33,43 +36,7 @@ public class StudentDTO {
 		this.updatedAt = updatedAt;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public Timestamp getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Timestamp createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Timestamp getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Timestamp updatedAt) {
-		this.updatedAt = updatedAt;
+	public StudentDTO(Student student) {
+		this(student.getId(), student.getName(), student.getAddress(), student.getCreatedAt(), student.getUpdatedAt());
 	}
 }

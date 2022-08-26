@@ -12,7 +12,7 @@ public class DataSourceConfig {
     public DataSource dataSource(){
         return DataSourceBuilder.create()
                 .driverClassName("org.mariadb.jdbc.Driver")
-                .url("jdbc:mariadb://localhost:49153/school")
+                .url("jdbc:mariadb://localhost:49155/school")
                 .username("root")
                 .password("mariadbpw")
                 .build();

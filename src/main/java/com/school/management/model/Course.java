@@ -30,11 +30,6 @@ public class Course {
         this.updatedAt = ts1;
     }
 
-    public Course(String name, Timestamp ts){
-        this.name = name;
-        this.updatedAt = ts;
-    }
-
     public Course update(CourseDTO courseDTO, Course course) {
         return new Course(course.getId(), courseDTO.getName(), course.getCreatedAt(), Timestamp.from(Instant.now()));
     }

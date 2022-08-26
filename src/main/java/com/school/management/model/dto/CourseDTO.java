@@ -1,5 +1,6 @@
 package com.school.management.model.dto;
 
+import com.school.management.model.Course;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,13 +18,14 @@ public class CourseDTO {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    public CourseDTO (Long id){
-        this.id = id;
-    }
-
     public CourseDTO(String name, Timestamp createdAt, Timestamp updatedAt) {
         this.name = name;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public CourseDTO(Course course) {
+        this(course.getId(), course.getName(), course.getCreatedAt(), course.getUpdatedAt());
+    }
+
 }
