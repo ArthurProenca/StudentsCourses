@@ -2,6 +2,7 @@ package com.school.management.model.dto;
 
 import com.school.management.model.Student;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
@@ -9,6 +10,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StudentDTO {
 
 	private Long id;

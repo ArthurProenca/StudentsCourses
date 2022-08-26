@@ -49,6 +49,7 @@ public class StudentService {
         Student student = studentRepository.findById(studentDTO.getId()).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Student not found."));
 
+
         if(studentDTO.getName() != null) {
             student.setName(studentDTO.getName());
         }
@@ -117,7 +118,18 @@ public class StudentService {
 
     }
 
+    @Transactional
     public void enrollStudentInCourses(Long id, List<Long> courseIds) {
+        studentRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Student not found."));
+        courseIds.forEach(courseId -> courseRepository.findById(courseId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Course " + courseId + " not found.")));
+
+        if(studentCourseRepository.countCoursesFromStudent(id) + 1 > 5) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "A student can not be enrolled in more than 5 courses.");
+        }
+
         courseIds.forEach(courseId -> studentRepository.enrollStudent(id, courseId));
     }
 

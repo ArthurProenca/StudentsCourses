@@ -20,10 +20,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query(value = "SELECT * FROM course WHERE id IN (SELECT course_id FROM t_student_course)", nativeQuery = true)
     List<Course> findAllCoursesWithStudents();
 
-    @Modifying
-    @Query(value = "DELETE FROM course", nativeQuery = true)
-    void deleteAllCoursesAndRelations();
-
     @Query(value = "SELECT * FROM course WHERE id IN (SELECT course_id FROM t_student_course WHERE student_id = ?1)", nativeQuery = true)
     List<Course> findCoursesFromStudent(Long id);
 }

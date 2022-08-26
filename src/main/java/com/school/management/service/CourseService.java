@@ -10,11 +10,13 @@ import com.school.management.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,9 +30,14 @@ public class CourseService {
     private final StudentRepository studentRepository;
 
     public List<CourseDTO> createCoursesList(List<CourseDTO> coursesDTO) {
+        if (coursesDTO.size() > 50) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "A request can not contain more than 50 students.");
+        }
+
         Timestamp ts = Timestamp.from(Instant.now());
         List<Course> courses = courseRepository.saveAll(coursesDTO.stream().filter(c -> c.getName() != null && !c.getName().isBlank()).map(courseDTO -> new Course(courseDTO.getName(), ts, ts)).collect(Collectors.toList()));
-        return courses.stream().map(student -> new CourseDTO(student.getName(), student.getCreatedAt(), student.getUpdatedAt())).collect(Collectors.toList());
+        return courses.stream().map(CourseDTO::new).collect(Collectors.toList());
     }
 
     public CourseDTO findById(Long id) {
@@ -55,7 +62,18 @@ public class CourseService {
         return courses.stream().map(CourseDTO::new).collect(Collectors.toList());
     }
 
-    public void enrollStudents(Long id, List<Long> studentIds) {
+    @Transactional
+    public void enrollStudents(Long id, List<Long> studentIds) {;
+        courseRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Course not found."));
+        studentIds.forEach(studentId -> studentRepository.findById(studentId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Student " + studentId + " not found.")));
+
+        if(studentCourseRepository.countStudentCourseByCourse(id) + studentIds.size() > 50) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "A course can not contain more than 50 students.");
+        }
+
         studentIds.forEach(studentId -> this.courseRepository.enrollStudent(id, studentId));
     }
 
@@ -76,7 +94,7 @@ public class CourseService {
                     HttpStatus.NOT_FOUND,
                     "To delete ALL courses and students-courses relationships, inform confirm-deletion=true as a query param.");
         }
-        courseRepository.deleteAllCoursesAndRelations();
+        courseRepository.deleteAll();
 
     }
 
